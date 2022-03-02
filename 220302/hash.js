@@ -22,9 +22,17 @@ console.log(sha256_3) //  <-- 얘가 지갑주소로 사용하는 해시값과 �
 // 단순히 해쉬값을 원본값으로 변환하는 것보다 이렇게 대입하는 방식이 더 빠르게 풀 수 있음.
 
 
-const salt = 'saltysalt' // .env에 넣고 감춰둠. 얘를 덧붙여서 암호화 할때의 내용을 유추할 수 없도록. 결과값이 완전히 달라짐. 이걸 모르면 똑같은 해시값을 만들 수 없음.
+const salt = 'saltysalt'
+const salty = 'saltysalty'
+// .env에 넣고 감춰둠. 얘를 덧붙여서 암호화 할때의 내용을 유추할 수 없도록. 결과값이 완전히 달라짐. 이걸 모르면 똑같은 해시값을 만들 수 없음.
+const hash0 = crypto.createHash('sha256', Buffer.from(salt)).update(name).digest('hex')
+console.log(hash0)
+const hash1 = crypto.createHash('sha256', Buffer.from(salty)).update(name).digest('hex')
+console.log(hash1)
 const hash = crypto.createHmac('sha256', Buffer.from(salt)).update(name).digest('hex')
 console.log(hash)
+const hash2 = crypto.createHmac('sha256', Buffer.from(salty)).update(name).digest('hex')
+console.log(hash2)
 
 
 // 클라이언트 -> 서버 전송시에는 원본 패스워드가 그대로 노출되지 않나요?
