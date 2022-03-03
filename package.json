@@ -1,6 +1,29 @@
 {
-  "dependencies": {
-    "express": "^4.17.3",
-    "nunjucks": "^3.2.3"
-  }
+    "name": "blockchain5",
+    "description": "- Buffer - 암호화 - Hash - JWT - 정리 : https://70707.tistory.com/29 # 220303",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "node server",
+        "dev": "nodemon server"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/hb707/lecture.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/hb707/lecture/issues"
+    },
+    "homepage": "https://github.com/hb707/lecture#readme",
+    "dependencies": {
+        "express": "^4.17.3",
+        "nodemon": "^2.0.15",
+        "nunjucks": "^3.2.3"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.15"
+    }
 }
