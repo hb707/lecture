@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript">
+        // 0. html 바디부 전부 완성된 후 script실행되도록 : DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', init)
+        // 1. submit버튼을 누를 때 form이 실행되지 않도록 하고 싶다.
+        function init() {
+            
+            // 1-1. 해당 엘리먼트를 선택해서 js로 가져오기
+            const loginForm = document.querySelector('#loginForm')
+            const userid = document.querySelector('#userid') // loginForm.querySelector 도 ok
+            const userpw = document.querySelector('#userpw')
+            // 1-2. 여기까지 작성한 상태로 브라우저 콘솔에 해당 엘리먼트가 출력되는지 확인
+            console.log(loginForm) 
+            // 1-3. form의 submit 눌렀을 때 발생할 이벤트를 작성
+            loginForm.addEventListener('submit', submitHandler)
+            function submitHandler (e) {
+                // 1-4. 기존에 발생하던 form의 디폴트 이벤트를 없애줌
+                
+                e.preventDefault()
+                // alert('이동안된다!')
+
+                // 2. submit 버튼을 눌렀을 때 userid, userpw 인풋값을 콘솔로그로 출력
+                console.log(userid.value, userpw.value)
+
+
+                const data = {
+                    userid:userid.value,
+                    userpw:userpw.value
+                }
+
+                ajax(data)
+            }
+
+            function ajax (item) {
+                //AJAX
+                const xhr = new XMLHttpRequest()  // DataType : 객체
+                // 자주쓰는 함수
+                // onreadystatechange
+                // open
+                // send
+                // response 관련
+
+                // 이 객체의 역할
+                // 1. 요청 보내기
+                // 2. 요청에 body 내용 넣기
+                // 3. 요청 header 조작
+                // 4. 응답받기
+
+                xhr.open('POST', 'http://localhost:3000/login2', true)
+
+
+                // xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+                // xhr.send(`usserid=${item.userid}&userpw=${item.userpw}`)
+
+
+            }
+
+        }
+    </script>
+</head>
+<body>
+    <form id="loginForm" method="post" action="/login">
+        <input id="userid" type="text" name="userid">
+        <input id="userpw" type="password" name="userpw">
+        <input type="submit" value="login">
+    </form>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javescript" src="https://unpkg.com/axios@0.26.0/dist/axios.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', init)
+        function init() {
+            const btn = document.querySelector('#idcheck_btn')
+            const msg = document.querySelector('#msg')
+            btn.addEventListener('click', clickHandler)
+
+            function clickHandler() {
+                const userid = document.querySelector('#userid')
+                const data = JSON.stringify({userid:userid.value})
+
+                const xhr = new XMLHttpRequest()
+                xhr.open('POST', '/idcheck', true) // 보낼 url Request method
+                xhr.setRequestHeader('Content-type', 'application/json') // header의 내용을 바꿀 수 있음
+                xhr.send(data) // Body에 넣어서 보냄
+
+                xhr.onreadystatechange = () => {
+                    //callback은 callback 안에서 try-catch 넣어야
+                    try {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            const {result} = JSON.parse(xhr.response)
+                            // 성공(가입가능)은 1 실패(가입불가능)는 2
+                            console.log(result)
+                            if (result === 2) {
+                                throw new Error ('아이디가 중복되었습니다.')
+                            } //response는 int로 줘도 string으로
+                            msg.innerHTML = '사용이 가능합니다.'
+                        }
+                    }
+                    catch (e) {
+                        //가입불가능한경우
+                        msg.innerHTML = '사용이 불가능합니다.'
+                        console.log(e)
+                    }
+                    
+                }
+            }
+
+        }
+        function ajax() {}
+
+        const btn = document.querySelector('#idcheck_btn')
+        const msg = document.querySelector('#msg')
+        const userid = document.querySelector('#userid')
+        btn.addEventListener('click', clickHandler)
+
+
+        // 내장객체 fetch 사용한 코드
+        function clickHandler2() {
+            const data = JSON.stringify({userid:userid.value})
+            let option = {
+                method : 'POST',
+                headers: {
+                    "content-type": "application/json"
+                }
+                // body: JSON.stringify({userid:'ingoo'}) // body 내용도 option에 담을 수 있음
+            }
+            fetch('http://localhost:3000/idcheck', option) // fetch문으로 비동기통신을 하겠다 : url, rm, body, header, response 필요
+            .then ((res)=> {
+                return res.json()
+            })
+            .then ((result)=>{
+                console.log(result)
+            })
+        }
+
+
+        // 외부라이브러리 axios 사용한 코드 <-- 웬만하면 이거 주로 사용함. fetch보다 퍼포먼스, 기능적으로 더 뛰어남. 그렇지만 비동기통신에 대한 이해가 전제로 깔려있어야함.
+        function clickHandler3() {
+            const data = JSON.stringify({userid:userid.value})
+            // app.get('url', ()=>{})
+            axios.post('http://localhost:3000/idcheck', {data}, {"content-type": "application/json"}) // 인자가 3개
+            .then((res)=>{ console.log(res) })
+        }
+        // 우리는 axios를 쓸거다!
+
+    </script>
+</head>
+<body>
+    <form action="/join" method="post">
+        <input type="text" id="userid" name="userid">
+        <input type="button" id="idcheck_btn" value="ID중복체크">
+        <div id="msg">
+
+        </div>
+    </form>
+</body>
+</html>

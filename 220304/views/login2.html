@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', init)
+        function init() {
+            console.log('init실행됨')
+            const userid = document.querySelector('#userid')
+            const userpw = document.querySelector('#userpw')
+            const logForm = document.querySelector('#logForm')
+
+            logForm.addEventListener('submit', submitHandler)
+
+            function submitHandler(e) {
+                console.log('submitHandler실행')
+                e.preventDefault()
+
+                const data = {
+                    userid: userid.value,
+                    userpw: userpw.value
+                }
+
+                ajaxLogin(data)
+            }
+
+            function ajax(data) {
+                console.log('ajax 실행')
+                const xhr = new XMLHttpRequest()
+
+                // 백엔드로 request 보내기
+                xhr.open('post','http://localhost:3000/login2', true)
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+                xhr.send(data) // 윗 줄 없이 바로 이렇게 쓰면 content-type이 달라서 body영역 해석을 못함
+
+                // 백엔드에서 response 받기
+                // callback 형태
+                xhr.onreadystatechange = () => {
+                    console.log('백에서 응답을 받아왔습니다.')
+                    switch(xhr.readyState) {
+                        case 2:
+                            console.log('header received')
+                        break;
+                        case 3:
+                            console.log('Loading')
+                        break;
+                        case 4:
+                            console.log('Done', xhr.response)
+                        break;
+                    }
+                }
+
+            }
+
+            function ajaxLogin(item) {
+                // 1. input에서 받은 아이디와 패스워드를 백엔드로 보낸다. -> submit버튼 클릭 시
+                // 2. 서버로 보낸 뒤 화면은 로딩화면을 띄운다
+                // 3. 서버는 아이디, 패스워드 검증 후 JWT 토큰을 생성하여 쿠키로 보낸다.
+                // 4. 결과물을 받으면 메인페이지로 이동한다. or 로그인 성공화면을 보여준다
+
+                const xhr = new XMLHttpRequest()
+                xhr.open('post','http://localhost:3000/login2', true)
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+                xhr.send(`userid=${item.userid}&userpw=${item.userpw}`) // 윗 줄 없이 바로 이렇게 쓰면 content-type이 달라서 body영역 해석을 못함
+                xhr.onreadystatechange = () => {
+                    console.log('백에서 응답을 받아왔습니다.')
+                    switch(xhr.readyState) {
+                        case 2:
+                            console.log('header received')
+                            document.querySelector('#msg').innerHTML = '로딩중'
+                        break;
+                        case 3:
+                            console.log('Loading')
+                        break;
+                        case 4:
+                            console.log('Done', xhr.response)
+                            document.querySelector('#msg').innerHTML = ''
+                        break;
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <form method="post" action="/login2" id="logForm">
+        <input type="text" id="userid">
+        <input type="text" id="userpw">
+        <input type="submit" id="btn" value="로그인">
+    </form>
+</body>
+</html>
