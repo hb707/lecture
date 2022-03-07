@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javescript" src="https://unpkg.com/axios@0.26.0/dist/axios.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', init)
+        function init() {
+            console.log('js실행')
+            const joinForm = document.querySelector('#joinForm')
+            const btn = document.querySelector('#idcheck_btn')
+            const msg = document.querySelector('#msg')
+            const userid = document.querySelector('#userid')
+            const userpw = document.querySelector('#userpw')
+            const username = document.querySelector('#username')
+            const level = document.querySelector('#level')
+            const data = {userid:userid.value, userpw:userpw.value, username:username.value, level:level.value}
+
+            joinForm.addEventListener('submit', async (e)=>{
+                e.preventDefault()
+                const response = await axios.post('/join', data,{'Content-type':'application/json'} )
+                console.log(response.data)
+
+                // DOM 조작을 해줌
+                document.write('')
+
+                
+                const spanElement = document.createElement('span')
+                spanElement.innerHTML = `${userid}님 환영합니다.
+                    패스워드는 : ${userpw}입니다.
+                    이름은 : ${username}입니다.`
+                
+                const template = document.querySelector('#welcome')
+                template.innerHTML = template.innerHTML.replace('{userid}', userid)
+                .replace('{userpw}', userpw)
+                .replace('{username}', username)
+            })
+        }
+    </script>
+</head>
+<body>
+    <div id="wrap">
+        <form method="post" action="/join" id="joinForm">
+            <input type="text" name="userid" id="userid" placeholder="id">
+            <input type="button" id="idBtn" value="IDcheck">
+            <div id="msg">
+
+            </div>
+            <input type="password" name="userpw" id="userpw" placeholder="pw">
+            <input type="text" name="username" id="username" placeholder="name">
+            <input type="hidden" name="level" value=1 id="level">
+            <input type="submit" value="회원가입">
+        </form>
+    </div>
+    <template>
+        <!-- 여기다가 만들어서... -->
+    </template>
+</body>
+</html>

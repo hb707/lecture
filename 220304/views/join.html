@@ -45,7 +45,82 @@
             }
 
         }
-        function ajax() {}
+        // ajax 부분을 함수로 빼서 사용하고 싶을 때
+        function ajax() {
+                const userid = document.querySelector('#userid')
+                const data = JSON.stringify({userid:userid.value})
+
+                const xhr = new XMLHttpRequest()
+                xhr.open('POST', '/idcheck', true) // 보낼 url Request method
+                xhr.setRequestHeader('Content-type', 'application/json') // header의 내용을 바꿀 수 있음
+                xhr.send(data) // Body에 넣어서 보냄
+
+                xhr.onreadystatechange = () => {
+                    //callback은 callback 안에서 try-catch 넣어야
+                    try {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            const {result} = JSON.parse(xhr.response)
+                            // 성공(가입가능)은 1 실패(가입불가능)는 2
+                            console.log(result)
+                            if (result === 2) {
+                                throw new Error ('아이디가 중복되었습니다.')
+                            } //response는 int로 줘도 string으로
+                            msg.innerHTML = '사용이 가능합니다.'
+                        }
+                    }
+                    catch (e) {
+                        //가입불가능한경우
+                        msg.innerHTML = '사용이 불가능합니다.'
+                        console.log(e)
+                    }
+                    
+                }
+            }
+        } 
+
+        // return으로 result값 꺼내 쓰기 불가능
+        // promise를 사용해야함
+
+        const ajax2 = new Promise((resolve,reject)=> {
+            const xhr = new XMLHttpRequest()
+            const userid = document.querySelector('#userid')
+            const data = JSON.stringify({userid:userid.value})
+            xhr.open('POST', '/idcheck', true) // 보낼 url Request method
+            xhr.setRequestHeader('Content-type', 'application/json') // header의 내용을 바꿀 수 있음
+            xhr.send(data) // Body에 넣어서 보냄
+
+            xhr.onreadystatechange = () => {
+                //callback은 callback 안에서 try-catch 넣어야
+                try {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        resolve(xhr.response)
+                    }
+                }
+                catch (e) {
+                    //가입불가능한경우
+                    reject('실패')
+                }
+                
+            }
+        })
+ 
+
+        // 근데 이 promise로 만든 ajax 함수의 return값을 사용하는 함수를 만들면 (pr.then(data))그 함수 내에서만 조작이 가능하고 함수 밖으로 빼낼 수가 없음
+        function test() {
+            ajax2.then((data)=>{
+                //여기 내에서만 조작이 가능하고 return이 불가능함
+            })
+        }
+        // 그래서 나온 것이 async,await
+        // 함수 앞에 async가 붙으면 return xx
+        async function test2() {
+            const a = await ajax2 //  ajax2의 리턴 값을 a에 담음
+        }
+
+
+
+
+        
 
         const btn = document.querySelector('#idcheck_btn')
         const msg = document.querySelector('#msg')
@@ -61,13 +136,14 @@
                 headers: {
                     "content-type": "application/json"
                 }
+                // content-type의 디폴트값은 application/x-www-어쩌고
                 // body: JSON.stringify({userid:'ingoo'}) // body 내용도 option에 담을 수 있음
             }
             fetch('http://localhost:3000/idcheck', option) // fetch문으로 비동기통신을 하겠다 : url, rm, body, header, response 필요
-            .then ((res)=> {
-                return res.json()
+            .then ((res)=> { // HTTP header정보
+                return res.json() // body영역 promise
             })
-            .then ((result)=>{
+            .then ((result)=>{ // result HTTP body
                 console.log(result)
             })
         }
@@ -81,6 +157,17 @@
             .then((res)=>{ console.log(res) })
         }
         // 우리는 axios를 쓸거다!
+        // axios에서는 xhr처럼 readyState 구분 가능. 근데 잘 안쓰는..?
+
+        async function clickHandler4() {
+            const data = JSON.stringify({userid:userid.value})
+            // 여기서 로딩화면 구현 코드
+            const response = await axios.post('http://localhost:3000/idcheck', {data}, {"content-type": "application/json"})
+            // 이렇게 하면 resolve 값(성공시)만 받아오기 때문에 try-catch문이랑 같이 써서 try {} 내부에서 실행시키고 실패시에는 catch로 넘어가게 코드 짜면 됨
+            // 로딩화면 지워준 뒤 결과 출력
+            console.log(response.data)
+        }
+        // axios로 데이터 전달할 때는 실제로는 스트링으로 변환해서 줘야하지만 편의성이 개선되어 굳이 변환해주는 코드를 사용하지 않고 객체 그대로 보내면 알아서 스트링으로 바꿔서 보내줌.
 
     </script>
 </head>

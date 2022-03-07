@@ -76,8 +76,23 @@ app.get('/admin', auth, (req, res) => {
 
 // router 2개
 app.get('/join', (req, res) => {
-    res.render('join')
+    res.render('join2')
 })
+
+// 비동기
+app.post('/join', (req, res) => {
+    const { userid, userpw, username, level } = req.body
+    const [check] = user.filter(v => v.userid === userid)
+    try {
+        if (check !== undefined) new Error('아이디중복')
+        user.push({ ...req.body })
+        res.send(JSON.stringify(user[user.length - 1]))
+    }
+    catch (e) {
+        console.log(e)
+    }
+})
+
 
 app.post('/idcheck', (req, res) => {
     console.log(req.body)

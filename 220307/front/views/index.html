@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    MAIN - FRONT
+    <button id="btn">버튼</button>
+    <script type="text/javascript">
+        const btn = document.querySelector('#btn')
+        btn.addEventListener('click', async()=>{
+            alert('버튼클릭')
+            // let response = await axios.get('http://localhost:4001/')
+            // 비동기 통신 : 1. request method : option으로 통신 가능한지 찔러봄
+            // 2. 원래 통신 보냄
+            // console.log(response)
+
+            const data = {
+                userid:'hbhb',
+                username:'hanbin'
+            }
+            const option = {
+                method:'post',
+                Headers:{'Content-type':'application/json'},
+                credentials:'include',
+                body: JSON.stringify(data)
+            }
+            let response = await axios.post('http://localhost:4001/', data, {'Content-type':'application/json'})
+            //const response = await fetch('http://localhost:4001', option)
+            //const result = await response.text()
+            //console.log(result)
+            console.log(response)
+        })
+    </script>
+</body>
+</html>
