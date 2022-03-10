@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1><a href="/">MAIN</a></h1>
+    <h2>회원가입 페이지</h2>
+    <!-- userid VARCHAR(10) NOT NULL ,
+    userpw VARCHAR(10) NOT NULL,
+    name VARCHAR(10) NOT NULL,
+    nickname VARCHAR(10) NOT NULL,
+    birth DATE,
+    gender CHAR(1),
+    phone VARCHAR(11),
+    mobile VARCHAR(11) NOT NULL, -->
+    <!-- POST http://localhost:4001/user/join -->
+    <form method="post" action="/" id="joinFormPost">
+        <ul class="joinForm">
+            <li class="joinList">
+                <span class="joinLabel">아이디</span>
+                <span class="joinInput">
+                    <input type="text" name="userid" id="userid">
+                </span>
+            </li>
+            <li class="joinList">
+                <span class="joinLabel">패스워드</span>
+                <span class="joinInput">
+                    <input type="password" name="userpw" id="userpw">
+                </span>
+            </li>
+            <li class="joinList">
+                <span class="joinLabel">이름</span>
+                <span class="joinInput">
+                    <input type="text" name="name" id="name">
+                </span>
+            </li>
+            <li class="joinList">
+                <span class="joinLabel">닉네임</span>
+                <span class="joinInput">
+                    <input type="text" name="nickname" id="nickname">
+                </span>
+            </li>
+            <li class="joinList">
+                <span class="joinLabel">생일</span>
+                <span class="joinInput">
+                    <input type="text" name="birth" id="birth">
+                </span>
+            </li>
+            <li class="joinList">
+                <span class="joinLabel">성별</span>
+                <span class="joinInput">
+                    <input type="radio" name="gender" value="M" id="gender1"><label for="gender1">남자</label>
+                    <input type="radio" name="gender" value="F" id="gender2" checked><label for="gender2">여자</label>
+                </span>
+            </li>
+            <li class="joinList">
+                <span class="joinLabel">전화번호</span>
+                <span class="joinInput">
+                    <input type="text" name="phone" id="phone">
+                </span>
+            </li>
+            <li class="joinList">
+                <span class="joinLabel">핸드폰번호</span>
+                <span class="joinInput">
+                    <input type="text" name="mobile" id="mobile">
+                </span>
+            </li>
+        </ul>
+        <input type="submit" id="btn" value="회원가입">
+    </form>
+    <script type="text/javascript">
+        const frm = document.querySelector('#joinFormPost')
+        const inputList = document.querySelectorAll('.joinInput > input')
+        const btn = document.querySelector('#btn')
+
+        frm.addEventListener('submit', async (e)=>{
+            // 1. submit 막기
+            e.preventDefault() 
+
+            // 2. input으로 받은 값 data에 담기
+            const data = {userlevel:1}
+            inputList.forEach(v=>{
+                data[v.name] = v.value
+            })
+            btn.value='로딩중'
+            btn.disabled = true
+            
+            
+
+
+            const option = {
+                'Content-type':'application/json',
+                withCredentials:true
+            }
+            const response = await axios.post('http://localhost:4001/api/user/join', data, option) // return ? promise : async/await 사용
+            console.log(response.data)
+
+            if (response.data.errNo == 0) {
+                location.href='/'
+            }
+            else{
+                btn.value='회원가입'
+                btn.disabled = false
+            }
+        })
+    </script>
+</body>
+</html>
