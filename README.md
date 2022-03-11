@@ -16,3 +16,6 @@
 - 220304 추가 : join화면에서 submit 시 별도의 라우터 이동 없이 welcome 페이지 띄우기
 - 프론트/백 서버 나누기 : fetch, axios로 프론트에서 백서버로 통신
     - Access-Control-Allow-... 얘네를 SetHeader로 지정해줘야함
+
+# 220308
+- 프론트/백 서버 나누기 후 회원가입 페이지 처리 : ajax로 input값 서버에 전달 후 db에 저장까지

@@ -5,8 +5,56 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    로그인
+    <h1><a href="/">MAIN</a></h1>
+    <h2>로그인 페이지</h2>
+    <form method="post" action="/api/user/login" id="loginForm">
+        <ul>
+            <li>
+                <input type="text" name="userid" id="userid" placeholder="아이디를 입력해주세요">
+            </li>
+            <li>
+                <input type="text" name="userpw" id="userpw" placeholder="패스워드를 입력해주세요">
+            </li>
+        </ul>
+        <input type="submit" value="로그인">
+    </form>
+    <script type="text/javascript">
+        const loginForm = document.querySelector('#loginForm')
+        const userid = document.querySelector('#userid')
+        const userpw = document.querySelector('#userpw')
+
+        loginForm.addEventListener('submit', async (e) =>  {
+            e.preventDefault()
+            const data = {
+                userid:userid.value,
+                userpw:userpw.value
+            }
+            const option = {
+                'Content-type':'application/json',
+                withCredentials:true
+            }
+            try{
+                const response = await axios.post('http://localhost:4001/api/user/login', data, option) // return ? promise : async/await 사용
+                
+                if (response.data.errNo === 0) {
+                    alert(`
+                    아이디 : ${response.data.result[0].userid},
+                    닉네임 : ${response.data.result[0].nickname}
+                    `)
+                    
+                    location.href = '/'
+                }
+                else{
+                    throw new Error ('Error')
+                }
+            }
+            catch(e) {
+                alert('아이디와 패스워드를 확인해주세요')
+            }
+        })
+    </script>
 </body>
 </html>

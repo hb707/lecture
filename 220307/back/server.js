@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const pool = require('./db').pool
+const { createToken } = require('./utils/jwt')
 const app = express()
 
 app.use(express.json())
@@ -27,20 +28,9 @@ app.post('/', (req, res) => {
 })
 
 app.post('/api/user/join', async (req, res) => {
-    console.log(req.body)
     const joinFormObj = { ...req.body }
-    console.log(Object.values(joinFormObj))
     const conn = await pool.getConnection()
     let insertSql = `INSERT INTO user(userlevel,userid,userpw,name,nickname,birth,gender,phone,mobile) VALUES(?,?,?,?,?,?,?,?,?)`
-    const [result] = await conn.query(insertSql, Object.values(joinFormObj))
-
-    const response = {
-        result: {
-            row: result.affectedRows,
-            id: result.insertId
-        },
-        errNo: 0
-    }
 
     const maxAge = 60 * 60 * 1000
     const cookieOption = {
@@ -48,17 +38,88 @@ app.post('/api/user/join', async (req, res) => {
         httpOnly: true,
         maxAge: maxAge
     }
-    res.cookie('name', 'hanbin', cookieOption)
-    res.json(response)
 
-    // 현재까지 구현한거 : 회원가입 폼 작성 후 ajax로 백서버 통신 - user db에 추가, 쿠키 생성해서 브라우저로 던지기, 메인으로 리디렉션
-    // 과제!
-    // 1. 회원가입 시 에러 안나게
-    // 1-1. 아이디 중복체크
-    // 1-2. javascript form 체크
-    // 1-3. 에러가 나더라도 서버 꺼지지 않게
-    // 2. try-catch 문 쓰기
+    // try-catch문 처리를 안해주면 에러가 나면 거기서 멈춤 -> 아래의 코드가 실행이 안됨 -> 응답을 주는 코드 실행 안됨 ->
+    try {
+        const [result] = await conn.query(insertSql, Object.values(joinFormObj))
+        const response = {
+            result: {
+                row: result.affectedRows,
+                id: result.insertId
+            },
+            errNo: 0
+        }
+        res.cookie('name', 'hanbin', cookieOption)
+        res.json(response)
+    }
+    catch (e) {
+        console.log(e.message) // 중복된 id 전달 시 uplicate entry 'admin' for key 'user.PRIMARY' 뜸
+        const response = {
+            result: {
+                row: 0,
+                id: 0
+            },
+            errNo: 1
+        }
+        res.json(response)
+    }
+    // 비동기 처리를 해줌으로써 에러가 뜨더라도 브라우저에 입력한 값들이 사라지지 않고 그대로 유지됨
 })
+
+
+app.post('/api/user/login', async (req, res) => {
+    const { userid, userpw } = req.body
+    const sql = `SELECT userlevel, userid, name, nickname  FROM user WHERE userid=? and userpw=?`
+    const userdata = [userid, userpw]
+    try {
+        const [result] = await pool.execute(sql, userdata)
+        if (result.length <= 0) throw new Error('존재하지 않는 회원')
+        const jwt = createToken(result[0])
+
+        const response = {
+            result,
+            errNo: 0
+        }
+
+        const maxAge = 60 * 60 * 1000
+        const cookieOption = {
+            path: '/',
+            httpOnly: true,
+            maxAge: maxAge
+        }
+
+        res.cookie('token', `${jwt}`, cookieOption)
+        res.json(response)
+    }
+    catch (e) {
+        console.log(e.message) // 중복된 id 전달 시 uplicate entry 'admin' for key 'user.PRIMARY' 뜸
+        const response = {
+            result: [],
+            errNo: 1
+        }
+        res.json(response)
+    }
+})
+
+// 토큰 인증 담당 라우터
+app.post('/api/auth', (req, res) => {
+    const { token } = req.body
+    // 토큰인증코드 추가
+    if (token) {
+        res.send('true')
+    }
+    else {
+        res.send('false')
+    }
+})
+
+
+
+
+
+
+
+
 
 app.listen(4001, () => {
     console.log('server on')
