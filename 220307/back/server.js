@@ -3,12 +3,15 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const pool = require('./db').pool
-const { createToken } = require('./utils/jwt')
+const { createToken, createSignature } = require('./utils/jwt')
 const app = express()
+const { Auth } = require('./middlewares/auth2')
+const { response } = require('express')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use(Auth)  // cookieParser 아래에 작성해주기❗️
 app.use(cors({
     credentials: true,
     origin: true
@@ -114,6 +117,37 @@ app.post('/api/auth', (req, res) => {
 })
 
 
+
+///////////////
+// board api //
+///////////////
+
+app.post('/api/board/write', async (req, res) => {
+    const { subject, content } = req.body
+    const { nickname } = req.user
+    const sql = `INSERT INTO board(subject, content, nickname) values(?,?,?)`
+    const prepare = [subject, content, nickname]
+    try {
+        const [result] = await pool.execute(sql, prepare)
+        response = {
+            ...response,
+            result: {
+                affectedRows: result.affectedRows,
+                insertId: result.insertId
+            },
+            errno: 0
+        }
+    }
+    catch (e) {
+        console.log(e.message)
+        const response = {
+            errno: 1
+        }
+    }
+    res.json(response)
+
+    res.json(response)
+})
 
 
 

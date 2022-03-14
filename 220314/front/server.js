@@ -1,43 +1,42 @@
-// 프론트 서버
 const express = require('express')
 const nunjucks = require('nunjucks')
-const app = express()
 const cookieParser = require('cookie-parser')
+const axios = require('axios')
+const app = express()
+
 const router = require('./routes')
 
-
 app.set('view engine', 'html')
-nunjucks.configure('views', { express: app })
+nunjucks.configure('views', {
+    express: app,
+    watch: true,
+})
 
 app.use(cookieParser())
 
-// 라우터
-// /: 메인페이지
-// /user/join : 회원가입
-// /user/login : 로그인
-// /user/profile : 프로필
+// 메인페이지
 app.get('/', (req, res) => {
     res.render('index')
 })
 
+// 회원가입
 app.get('/user/join', (req, res) => {
     res.render('join')
 })
 
+// 로그인페이지
 app.get('/user/login', (req, res) => {
     res.render('login')
 })
 
+// 프로필페이지
 app.get('/user/profile', (req, res) => {
     res.render('profile')
 })
 
-
-// board router
 app.use(router)
 
 
-
 app.listen(3001, () => {
-    console.log('server on')
+    console.log(`server 시작`)
 })

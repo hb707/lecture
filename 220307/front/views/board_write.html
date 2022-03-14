@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1><a href="/">MAIN</a></h1>
+    <h2>게시판 글쓰기</h2>
+    <form method="post" action="http://localhost:4001/api/board/write" id="write_form">
+        <ul>
+            <li>
+                제목 : <input type="text" name="subject" id="subject">
+            </li>
+            <li>
+                내용 : <textarea type="content" name="content" id="content" cols="50" rows="20"></textarea>
+            </li>
+        </ul>
+        <input type="submit" id="btn" value="글쓰기">
+    </form>
+    <script type="text/javascript">
+        const frm = document.querySelector('#write_form')
+        const subject = document.querySelector('#subject')
+        const content = document.querySelector('#content')
+
+        frm.addEventListener('submit', async (e) => {
+            e.preventDefault()
+            const body = {
+                subject:subject.value,
+                content:content.value
+            }
+            const option = {
+                'Content-type':'application/json',
+                withCredentials:true
+            }
+            const response = await axios.post('http://localhost:4001/api/board/write', body, option) // return ? promise : async/await 사용
+            
+            if (response.data.errno === 0) {
+                const {indserId} = response.data.result
+                location.href=`/board/view/${insertId}`
+                // idx값 전달 방법 1. 쿼리 ?idx=1 2. board/view/1
+            }
+            else {
+                subject.value = ''
+                content.value = ''
+                console.log('DB에러')
+            }
+            console.log(response.data)
+        })
+    </script>
+</body>
+</html>

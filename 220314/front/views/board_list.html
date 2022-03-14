@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #board > thead td{
+            padding:7px 14px;
+            background-color: #aeaeae;
+        }
+        #board > tbody td{
+            padding:7px 14px;
+            border-bottoM:1px solid #333;
+        }
+        #board .subject {
+            width:45%;
+        }
+
+        #pagingDiv {
+            display: flex;
+        }
+        #pageBtnDiv {
+            display: flex;
+        }
+        .pNum {
+            padding: 3px;
+            background: #ccc;
+        }
+    </style>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript">
+        // init 함수
+        const init = async () => {
+            const trElement = document.querySelector('#board_row').innerHTML // <-- data type : string : replace메소드 사용 가능 : {}찾아서 대체해주는 방식
+            const pgElement = document.querySelector('#pageBtn').innerHTML
+
+            // 1. axios로 백엔드에서 board db 가져오기
+            const response = await axios.post('http://localhost:4001/api/board/list',{
+                withCredentials:true
+            })
+            const errorFlag = response.data.errno // 나중에 에러 처리 해주기
+            const Nodes = response.data.result
+            const totalRecord = response.data.totalRecord
+
+            const viewArticle = 10 // 한 화면에 보일 게시물 수
+            const blockArticle = 10 // 한번에 보이는 페이지버튼 개수
+            const totalPage = Math.ceil(totalRecord/viewArticle)
+            const totalBlock = Math.ceil(totalPage/blockArticle)
+
+            // 초기값 : 페이지1, 페이징블럭1
+            let currentBlock = 1
+            let currentPage = 1
+
+
+            // 버튼 렌더링 이벤트
+            const BtnDivEvent = (currentBlock) => {
+                if (currentBlock > totalBlock) {currentBlock = totalBlock}
+                if (currentBlock < 1) {currentBlock = 1}
+                let pageTemplate = ''
+                for (let i=currentBlock*10-9; i<=currentBlock*10; i++) {
+                    if (i >= 1 && i<= totalPage) {pageTemplate += pgElement.replace('{pNum}', i).replace('{pNum}', i)}
+                    pageBtnDiv.innerHTML = pageTemplate
+                }
+                const pageArr = document.querySelectorAll('.pNum')
+                pageArr.forEach((v,i)=>{
+                    v.addEventListener('click', ()=>{currentPage = v.innerHTML; ListEvent(currentPage)})
+                })
+            }
+
+
+            // 리스트 렌더링 이벤트
+            const ListEvent = (currentPage) => {
+                let str = ''
+                Nodes.slice(currentPage*10-10,currentPage*10).forEach(v=>{
+                    str += trElement.replace('{idx}', v.idx)
+                                    .replace('{idx}', v.idx)
+                                    .replace('{subject}', v.subject)
+                                    .replace('{nickname}', v.nickname)
+                                    .replace('{date}', v.date)
+                                    .replace('{hit}', v.hit)
+                })
+                const tbody = document.querySelector('#board tbody')
+                tbody.innerHTML = str
+            }
+
+            
+            BtnDivEvent(currentBlock)
+            ListEvent(currentPage)
+            
+            
+            // 페이징 버튼 변경 함수
+            const nextBtn = document.querySelector('#nextBtn')
+            const prevBtn = document.querySelector('#prevBtn')
+
+            nextBtn.addEventListener('click', ()=>{
+                currentBlock += 1
+                BtnDivEvent(currentBlock)
+            })
+
+            prevBtn.addEventListener('click', ()=>{
+                currentBlock -= 1
+                BtnDivEvent(currentBlock)
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', init)
+    </script>
+</head>
+
+<body>
+    <h1><a href="/">MAIN</a></h1>
+    <h2><a href="/board/list">게시판</a></h2>
+    <ul>
+        <li><a href="/board/view/1">글보기</a></li>
+        <li><a href="/board/write">글쓰기</a></li>
+    </ul>
+    <table cellspacing="0" cellpadding="0" id="board">
+        <thead>
+            <tr>
+                <td>번호</td>
+                <td class="subject">제목</td>
+                <td>작성자</td>
+                <td>작성일</td>
+                <td>조회수</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>테스트</td>
+                <td>hb</td>
+                <td>2022-03-14</td>
+                <td>0</td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="pagingDiv">
+        <button id="prevBtn">👈</button>
+        <div id="pageBtnDiv">
+            <button class="pNum num{pNum}">{pNum}</button>
+        </div>
+        <button id="nextBtn">👉</button>
+    </div>
+    
+    <template id="board_row">
+        <tr>
+            <td>{idx}</td>
+            <td><a href="/board/view/{idx}">{subject}</a></td>
+            <td>{nickname}</td>
+            <td>{date}</td>
+            <td>{hit}</td>
+        </tr>
+    </template>
+
+    <template id="pageBtn">
+        <button class="pNum">{pNum}</button>
+    </template>
+
+</body>
+</html>
