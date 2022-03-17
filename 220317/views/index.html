@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript">
+        // const webSocket = new WebSocket('ws://localhost:3001') // 브라우저 내장 객체 WebSocket, 인자로 주소입력, 프로토콜 부분만 http대신 ws로
+        // webSocket.onopen = () => {
+        //     console.log('웹소켓 Connection 성공 == handshake')
+        // }
+        // // on = 듣기 = 서버가 날려준 메세지를 받음
+        // webSocket.onmessage = (event) => {
+        //     /*
+        //     console.log(event.data) // message는 string으로 전달됨
+        //     console.log(typeof event.data)
+        //     console.log(JSON.parse(event.data)) // 객체로 출력
+        //     */
+
+        //     const message = JSON.parse(event.data) // 백에서 ws.send로 보낸 내용이 event.data에 담김
+        //     const {event:evt, msg} = message
+
+        //     // if (evt == 'init') {
+        //     //     console.log(msg)
+        //     // } else if (evt == 'hello') {
+        //     //     //document.body.innerHTML = msg
+        //     // } else if (evt == 'rtn') {
+        //     //     webSocket.send('안녕')
+        //     // }
+        // }
+
+        document.addEventListener('DOMContentLoaded', ()=>{
+            // 1. html 연결 끝나면 웹소켓 연결
+            const webSocket = new WebSocket('ws://localhost:3001')
+
+            // 2. handshake
+            webSocket.onopen = () => {
+                console.log('HandShake 성공')
+            }
+
+            // 3. webSocket.onmessage 는 넣어줘도되고, 안넣어줘도 작동은 됨
+
+            const form = document.querySelector('form')
+            form.addEventListener('submit', (e)=> {
+                e.preventDefault()
+                const  {input} = e.target
+                let data = {
+                    type: 'send_message',
+                    data: {
+                        // 여기에 id 항목 추가하면 사용자 구분해서 채팅 만들어짐
+                        msg:input.value
+                    }
+                }
+                webSocket.send(JSON.stringify(data))
+                input.value = ''
+                input.focus()
+            })
+
+            webSocket.onmessage = (event) => {
+                console.log(event.data)
+                const chat = document.querySelector('#chat')
+                const liElement = document.createElement('li')
+                liElement.innerHTML = event.data
+                chat.appendChild(liElement)
+            }
+
+
+        })
+    </script>
+</head>
+<body>
+    <h1><a href="/">MAIN</a></h1>
+    메인페이지
+    <input type="hidden" id="nickname" value="{{nickname}}">
+    <form action="/" method="get">
+        <input type="text" name="input" id="input">
+        <input type="submit">
+    </form>
+    <ul id="chat">
+
+    </ul>
+</body>
+</html>
