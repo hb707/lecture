@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script> <!-- 객체 -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const root = document.querySelector('#root')
+        // 여기에 코드
+        async function getData ()  {
+            const response = await axios.get('http://localhost:4001/api/admin/manage/user/info', {
+                withCredentials: true
+            })
+            return response.data
+        }
+        getData()
+        class App1 extends React.Component {
+            render() {
+                return (
+                    <div></div>
+                )
+            }
+        }
+
+        const App = async () => {
+            const data = await getData()
+            return <div><Table userData={data} />{data}</div>
+        }
+
+        const Table = async () => {
+            const data = this.userData
+            return (
+                <React.Fragment>
+                    <thead>
+                        <tr>
+                            <td>아이디</td>
+                            <td>닉네임</td>
+                            <td>포인트</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tbodyComponent userData={data} />
+                    </tbody>
+                </React.Fragment>
+            )
+        }
+
+        const TbodyElement = async (props) => {
+            console.log(props)
+            const rows = props.userData.map((row, i) => {
+                return (
+                <tr>
+                    <td>{row.userid}</td>
+                    <td>{row.nickname}</td>
+                    <td>{row.point}</td>
+                </tr>
+            )
+            })
+            
+            return <Reack.Fragment>{rows}</Reack.Fragment>
+        }
+
+        ReactDOM.render(<App />, root)
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script> <!-- 객체 -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <!-- root 엘리먼트를 먼저 만들고 시작 -->
+    <script type="text/babel">
+        // type을 text/javascript가 아닌 text/babel로 변경
+        // react : react문법이 담긴 라이브러리
+        // react-dom : 전체 엘리먼트 내에서 변경이 일어나는 부분을 찾아내고 그 부분을 바꿔주는 라이브러리
+        
+        
+        const root = document.querySelector('#root')
+
+        // createElement : 
+        // 인자1 - 엘리먼트명 (a, button, input, li, img...), 
+        // 인자2 - 속성값 (input이면 type, value 등등..) => Object 형태로 넣음  {id: 'btn', class:'btnClass'}
+        // 인자3 - innerHTML 내용. 엘리먼트 태그의 내부에 들어가는 내용.
+        const btn = React.createElement('button', {id: 'btn', class:'btnClass'}, '버튼') // 기존JS문법에서 document.createElement와 비슷
+        
+        // render : 
+        // 인자1 - 내가 넣을 내용, 
+        // 인자2 - 넣을 위치
+
+        const btn1 = <button id='btn' class='btnClass'>버튼1</button>
+        // babel로 속성값 넣는 방법 : 1. 기존 HTML방식으로👆 2. 내부에 변수를 사용할 때 {변수명} 이렇게👇
+        const id = 'btn'
+        const btn2 = <button id={id} class='btnClass'>버튼2</button>
+
+        // 클래스 컴포넌트 사용 : App이라는 class 안에 render라는 함수를 담음
+        class App extends React.Component{ // 상속을 받아서 App 클래스 구성
+            render() { // render 함수 선언 : 화면에 최종적으로 그릴 내용을 넣는 공간
+                return (
+                    <button>클래스 버튼</button>
+                )
+            }
+        }
+        // 기존의 class에서 render함수 호출 방법 : App().render()
+
+        // 함수형 컴포넌트 사용
+        const App2 = () => {
+            return <button>함수형 버튼</button>
+        }
+
+        ReactDOM.render(btn2, root)
+
+        // 컴포넌트 사용
+        ReactDOM.render(<App />, root) // 클래스 컴포넌트를 랜더링하려면 <App />
+        // ReactDOM.render(React.createElement(App), root) // 이렇게도 사용 가능함. 근데 잘 안씀... 귀찮..
+
+        // babel : javascript 영역에서 HTML을 사용할 수 있게 해주는 라이브러리
+        
+        // JS영역에서 HTML을 사용할 수 있는 것 : JSX
+    </script>
+</body>
+</html>
