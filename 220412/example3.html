@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script> <!-- 객체 -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const root = document.querySelector('#root')
+
+        // 컴포넌트를 만들 때 앞글자는 대문자로!!
+        class App extends React.Component {
+            render() {
+                return (
+                    <div><Table /></div>
+                )
+            }
+        }
+
+
+        class Table extends React.Component {
+            render() {
+                return (
+                    <table>
+                        <thead>
+                            <Subject />
+                        </thead>
+                        <tbody>
+                            <Contents />
+                            <Contents />
+                            <Contents />
+                            <tr>
+                                <Tail />
+                            </tr>
+                        </tbody>
+                    </table>
+                )
+            }
+        }
+
+        class Subject extends React.Component {
+            render() {
+                return (
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>작성일</th>
+                        <th>조회수</th>
+                    </tr>
+                )
+            }
+        }
+
+        class Contents extends React.Component {
+            render() {
+                const arr = [1,2,3,4,5]
+                return (
+                    <tr>
+                        <td>{arr[0]}</td>
+                        <td>{arr[1]}</td>
+                        <td>{arr[2]}</td>
+                        <td>{arr[3]}</td>
+                        <td>{arr[4]}</td>
+                    </tr>
+                )
+            }
+        }
+
+        class Tail extends React.Component {
+            render() {
+                // Fragment : 화면에 보이지는 않지만 리액트컴포넌트로 작동만 되게끔 감싸주는 가상 div 
+                return (
+                    <React.Fragment>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </React.Fragment>
+                )
+            }
+        }
+
+        // 대소문자 구분 잘 하기!
+        ReactDOM.render(<App />, root)
+    </script>
+</body>
+</html>
+
