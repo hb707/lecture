@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script> <!-- 객체 -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        #divApp {
+            width: 100vw;
+            height: 100vh;
+            background-color: red;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        #divA {
+            width: 40vw;
+            height: 60vh;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #divB {
+            width: 40vw;
+            height: 60vh;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #divC {
+            width: 20vw;
+            height: 30vh;
+            background-color: red;
+        }
+
+        #divD {
+            width: 20vw;
+            height: 30vh;
+            background-color: red;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        class D extends React.Component {
+            render() {
+                return (
+                    <div id="divD" className="nameClass">{this.props.name}</div>
+                )
+            }
+        }
+
+        class C extends React.Component {
+            render() {
+                return (
+                    <div id="divC" className="nameClass">{this.props.name}</div>
+                )
+            }
+        }
+        class B extends React.Component {
+            render() {
+                return (
+                    <div id="divB"><D name={this.props.name}/></div>
+                )
+            }
+        }
+        class A extends React.Component {
+            render() {
+                return (
+                    <div id="divA"><C name={this.props.name} /></div>
+                )
+            }
+        }
+
+        class App extends React.Component {
+            render() {
+                return (
+                    <div id="divApp">
+                        <A name={'hanbin'} />
+                        <B name={'hanbin'} />
+                    </div>
+                )
+            }
+        }
+        ReactDOM.render(<App />, document.querySelector('#root'))
+    </script>
+</body>
+</html>

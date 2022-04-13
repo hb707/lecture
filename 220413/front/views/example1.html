@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script> <!-- 객체 -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        // 여기에 코드
+        // 오늘 배울 것 : Props & State🔥
+        // 👉 리액트의 모토 : 데이터(Props, State)가 바뀌면 화면(Component)이 바뀐다! 👈
+        // 데이터가 바뀌면 render가 다시 실행 : 근데 바뀐 부분만!
+        class Input extends React.Component {
+            // 기존에 사용하던 props 전달받는 방법. 현재는 쓰지 않는 코드이다.
+            constructor(props) {
+                super(props)
+            } 
+            
+            render() {
+                // props는 this.props 객체에 저장이 된다.
+                const {name} = this.props
+
+                return (
+                    <input type="text" value={name} />
+                )
+            }
+        }
+
+        /*
+        class App extends React.Component {
+            render() {
+                return (
+                    <div><Input hanbin={1} /></div>
+                )
+            }
+        }
+        */
+
+        class App extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <Input 
+                            hanbin={1}
+                            name={'hanbin}'}
+                            age={'29'}
+                         />
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(<App />, document.querySelector('#root'))
+    </script>
+</body>
+</html>
+

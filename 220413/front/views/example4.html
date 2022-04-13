@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script> <!-- 객체 -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        class TrueState extends React.Component {
+            render() {
+                return (
+                    <div>로그아웃!</div>
+                )
+            }
+        }
+
+        class FalseState extends React.Component {
+            render() {
+                return (
+                    <div>로그인!</div>
+                )
+            }
+        }
+
+
+        class Login extends React.Component {
+            //기존
+            // constructor(props) {
+            //     super(props)
+            //     this.state = {}
+            // }
+
+            //현재 : 이름은 무조건 state여야함. 변수명을 절대 바꾸면 안됨.
+            state = {
+                isLogin: false
+            }
+
+            // state는 객체이므로 단순히 내부 데이터를 바꾸면 컴퓨터는 바뀐줄 모름. 스프레드 연산자를 사용해야함.
+            
+
+            render() {
+                const obj = {
+                    ...this.state,
+                    isLogin: !this.state.isLogin
+                }
+                return (
+                    <div>
+                        <button onClick={ ()=>{this.setState(obj)} }> {this.state.isLogin ? <TrueState /> : <FalseState />} </button>
+                    </div>
+                )
+            }
+            // 렌더할 때 바로 alert함수가 실행되어버림 => 익명함수로 감싸줘서 onClick 동작이 실행될 때만 함수가 실행되도록 해줘야함.
+            // 이제 익명함수 내부에는 axios를 실행하고 데이터를 바꾸고 state를 바꿔주는 함수를 넣으면 되는듯?
+        }
+
+        class App extends React.Component {
+            render() {
+                return (
+                    <div><Login /></div>
+                )
+            }
+        }
+
+        ReactDOM.render(<App />, document.querySelector('#root'))
+    </script>
+</body>
+</html>
