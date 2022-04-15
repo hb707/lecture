@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script> <!-- 객체 -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        body {
+        font: 14px "Century Gothic", Futura, sans-serif;
+        margin: 20px;
+        }
+
+        ol, ul {
+        padding-left: 30px;
+        }
+
+        .board-row:after {
+        clear: both;
+        content: "";
+        display: table;
+        }
+
+        .status {
+        margin-bottom: 10px;
+        }
+
+        .square {
+        background: #fff;
+        border: 1px solid #999;
+        float: left;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 34px;
+        height: 34px;
+        margin-right: -1px;
+        margin-top: -1px;
+        padding: 0;
+        text-align: center;
+        width: 34px;
+        }
+
+        .square:focus {
+        outline: none;
+        }
+
+        .kbd-navigation .square:focus {
+        background: #ddd;
+        }
+
+        .game {
+        display: flex;
+        flex-direction: row;
+        }
+
+        .game-info {
+        margin-left: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        //TIC TAC TOE
+        const calculateWinner = squares => {
+            const lines = [
+                [0,1,2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ]
+
+            for (let i=0; i<lines.length; i++) {
+                const [a,b,c] = lines[i]
+                if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+                    return squares[a]
+                }
+            }
+            return null
+        }
+        // 필요한 컴포넌트 : Square, Board, Game
+        class Square extends React.Component{
+           
+            render() {
+                return (
+                <button className="square" onClick={this.props.onClick}>{this.props.value}</button>
+                )
+            }
+        }
+
+        class Board extends React.Component{
+            state = {
+                player : true,
+                squares: Array(9).fill(null)
+            }
+            
+
+            clickHandler = i => {
+                const squares = [...this.state.squares]
+                // 기존에 클릭한 버튼인지 구분
+                if (squares[i] !== null || calculateWinner(squares) !== null) return
+                // null인 경우에만 아래 코드 실행
+                squares[i] = this.state.player ? '⭕️' : '❌'
+                this.setState({
+                    ...this.state,
+                    player: !this.state.player,
+                    squares
+                })
+                console.log(this.state.squares)
+                
+            }
+
+            renderSquare = i => {
+                return <Square 
+                            value={this.state.squares[i]} 
+                            onClick={()=>{this.clickHandler(i)}}  // 익명함수에 감싸서 던져야 인자값인 i를 함꼐 전달할 수 있다.
+                        />
+            }
+
+            render() {
+                const {renderSquare, state:{squares}} = this
+                const winner = calculateWinner(squares)
+                if (winner !== null) {
+                    console.log(winner), 
+                    alert(`축하합니다. ${winner}의 승리입니다.`)
+                }
+
+                const status = winner != null? `Winner: ${winner}` : `Next Player : ${this.state.player? '⭕️' : '❌'}`
+                return (
+                    <div>
+                        <div className="status"> {status} </div>
+
+                        <div className="board-row">
+                            {renderSquare(0)}
+                            {renderSquare(1)}
+                            {renderSquare(2)}
+                        </div>
+                        <div className="board-row">
+                            {renderSquare(3)}
+                            {renderSquare(4)}
+                            {renderSquare(5)}
+                        </div>
+                        <div className="board-row">
+                            {renderSquare(6)}
+                            {renderSquare(7)}
+                            {renderSquare(8)}
+                        </div>
+                    </div>
+                )
+            }
+        }
+
+        class Game extends React.Component{
+            render() {
+                return (
+                    <div className="game">
+                        <div className="game-board">
+                            <Board />
+                        </div>
+                        <div className="game-info">
+                            
+                        </div>
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(<Game />, document.querySelector('#root'))
+    </script>
+</body>
+</html>

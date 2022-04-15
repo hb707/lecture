@@ -2,7 +2,7 @@ class Header extends React.Component {
     render() {
         return (
             <div id="header">
-                메인입니다.
+                헤더
             </div>
         )
     }
@@ -14,6 +14,7 @@ class Main extends React.Component {
             <div id="main">
                 <Counter />
                 <Tictactoe />
+                <List />
             </div>
         )
     }
@@ -47,13 +48,35 @@ class Counter extends React.Component {
 }
 
 class Tictactoe extends React.Component {
-    state = { player: 0 }
+    state = {
+        player: false,
+        squareArr: Array(9).fill(-1)
+    }
+    endGame = (arr) => {
+        const answerArr = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]
+        ]
+        const player0 = []
+        const player1 = []
+        arr.forEach((v, i) => {
+            if (v === false) { player0.push(i) }
+            else if (v === true) { player1.push(i) }
+        })
+        console.log(arr, player0, player1)
+        if (arr.indexOf(-1) === -1) { alert('게임종료') }
+    }
 
-    selected = (e) => {
-        console.log(e.target)
-        let changedPlayer = { ...this.state, player: !this.state.player }
+    selected = async (e) => {
+
+
+        const newSquare = [...this.state.squareArr]
+        newSquare[parseInt(e.target.value)] = this.state.player
+
+        let changedPlayer = { ...this.state, player: !this.state.player, squareArr: newSquare }
         e.target.innerHTML = this.state.player ? '⭕️' : '❌'
-        this.setState(changedPlayer)
+
+        await this.setState(changedPlayer)
+        this.endGame(this.state.squareArr)
     }
 
     render() {
@@ -61,16 +84,107 @@ class Tictactoe extends React.Component {
             <div id="tictactoe">
                 <span> 현재 플레이어 : {this.state.player ? '⭕️' : '❌'} </span>
                 <ul id="boardUl">
-                    <li className="board" num="0" onClick={this.selected}></li>
-                    <li className="board" num="1" onClick={this.selected}></li>
-                    <li className="board" num="2" onClick={this.selected}></li>
-                    <li className="board" num="3" onClick={this.selected}></li>
-                    <li className="board" num="4" onClick={this.selected}></li>
-                    <li className="board" num="5" onClick={this.selected}></li>
-                    <li className="board" num="6" onClick={this.selected}></li>
-                    <li className="board" num="7" onClick={this.selected}></li>
-                    <li className="board" num="8" onClick={this.selected}></li>
+                    <li className="board" value="0" onClick={this.selected}></li>
+                    <li className="board" value="1" onClick={this.selected}></li>
+                    <li className="board" value="2" onClick={this.selected}></li>
+                    <li className="board" value="3" onClick={this.selected}></li>
+                    <li className="board" value="4" onClick={this.selected}></li>
+                    <li className="board" value="5" onClick={this.selected}></li>
+                    <li className="board" value="6" onClick={this.selected}></li>
+                    <li className="board" value="7" onClick={this.selected}></li>
+                    <li className="board" value="8" onClick={this.selected}></li>
                 </ul>
+            </div>
+        )
+    }
+}
+
+
+//  
+class Form extends React.Component {
+    state = {
+        value: ''
+    }
+
+    changeHandler = async (e) => {
+        const { state } = this
+        const { target: { value } } = e
+        await this.setState({
+            ...state,
+            value
+        }) //setState는 비동기임
+        //console.log(this.state.value)
+    }
+
+    submitHandler = e => {
+        e.preventDefault()
+        const { changeValue } = this.props
+        changeValue(this.state.value)
+        this.state.value = ''
+    }
+
+    render() {
+        const {
+            state: { value },
+            changeHandler,
+            submitHandler
+        } = this
+        return (
+            <form onSubmit={submitHandler}>
+                내용 : <input type="text" value={value} onChange={changeHandler} />
+                <input type="submit" value="확인" />
+            </form>
+        )
+    }
+}
+
+class Ul extends React.Component {
+    // 얘는 업데이트 되는 props를 못받아온다. 
+    makeNewList = () => {
+        const list = this.props.boardLi.map((v, k) => {
+            return (
+                <li>
+                    <span>{v.id}.{v.subject}</span>
+                </li>
+            )
+        })
+        return list
+    }
+
+    // 리스트를 매핑해서 JSX형태로 만들어 배열에 담아 render()에 주면 알아서 list length만큼 생성해줌
+
+    render() {
+        return (
+            <ul>
+                {this.makeNewList()}
+            </ul>
+        )
+    }
+}
+
+class List extends React.Component {
+    state = {
+        board: [
+            { id: 1, subject: '제목1' },
+            { id: 2, subject: '제목2' },
+            { id: 3, subject: '제목3' },
+            { id: 4, subject: '제목4' },
+        ]
+    }
+
+    changeValue = async (v) => {
+        const newboardArr = [...this.state.board]
+        newboardArr.push({ id: newboardArr.length + 1, subject: v })
+        await this.setState({
+            ...this.state,
+            board: newboardArr
+        })
+    }
+    render() {
+        return (
+            <div id="makeList">
+                <Form changeValue={this.changeValue} value={this.state.value} />
+                <Ul boardLi={this.state.board} />
             </div>
         )
     }
@@ -80,7 +194,7 @@ class Footer extends React.Component {
     render() {
         return (
             <div id="footer">
-                푸터입니다.
+                푸터
             </div>
         )
     }
