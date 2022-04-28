@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script> <!-- 객체 -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        class App extends React.Component {
+            handleSubmit = e => {
+                e.preventDefault()
+                // handleSubmit은 event를 인자값으로 받게됨.
+                // 그런데 event 말고 다른 인자를 넣어주고 싶다면?
+            }
+            // render () {
+            //     return (
+            //         <form action="http://naver.com" onSubmit={handleSubmit}>
+            //             <input type="text" name="아이디" placeholder="아이디를 입력해주세용" />
+            //             <input type="submit" value="입력" />
+            //         </form>
+            //     )
+            // }
+
+            render () {
+                return (
+                    // onSubmit에 인자값을 넣어 콜백함수를 실행시키고 싶다면?... 고차함수를 사용하면 됨.
+                    <form action="http://naver.com" onSubmit={()=>{handleSubmit}}>
+                        <input type="text" name="아이디" placeholder="아이디를 입력해주세용" />
+                        <input type="submit" value="입력" />
+                    </form>
+                )
+            }
+        }
+
+        ReactDOM.render(<App />, document.querySelector('#root'))
+    </script>
+</body>
+</html>
