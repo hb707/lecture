@@ -7,6 +7,7 @@ import Header from './components/Header'
 import Main from './components/Main'
 import Footer from './components/Footer'
 import Reduce from './components/callback/Reduce'
+import Comment from './components/comment/Comment'
 import './assets/layout.css'
 
 
@@ -16,18 +17,9 @@ const App = () => {
 
     return (
         <div className="App">
-            {/* <h1>State</h1>
-            <State />
-            <h1>Effect</h1>
-            <Effect />
-            <h1>Login</h1>
-            <Login />
-            <h1>Props</h1>
-            <Props name='한빈' id='hbhb' /> */}
-
             <Header isLogin={isLogin} setIsLogin={setIsLogin} user={user} setUser={setUser} />
-            <Reduce />
-            <Main />
+            <Comment />
+            {/* <Main /> */}
             <Footer />
         </div>
     );
