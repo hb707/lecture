@@ -26,6 +26,8 @@ app.post('/api/login', async (req, res) => {
     res.json(result)
 })
 
+app.post()
+
 server.listen(4000, () => {
     console.log('server on')
 })
